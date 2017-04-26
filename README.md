@@ -1,4 +1,4 @@
-Ansible Laravel Homestead Settler
+Ansible Amazon Linux Node
 ==================================
 
 > Ansible scripts that setup Node.js and create an app in Upstart for Amazon Linux AMIs
