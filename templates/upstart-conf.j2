@@ -1,0 +1,13 @@
+#!upstart
+description "{{ app_name }}"
+author "{{ app_author }}"
+
+start on runlevel [2345]
+
+script
+  chdir /home/{{ app_user }}{{ app_root }}
+  exec npm start
+end script
+
+# Respawn and stop respawning if it got respawned 10 time in 10 seconds
+respawn limit 10 10

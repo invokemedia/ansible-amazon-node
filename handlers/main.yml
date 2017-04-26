@@ -1,0 +1,7 @@
+---
+- name: start nodeapp
+  service: name="{{ app_service_name }}" state=started
+- name: restart nodeapp
+  service: name="{{ app_service_name }}" state=restarted
+- name: stop nodeapp
+  service: name="{{ app_service_name }}" state=stopped

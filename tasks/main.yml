@@ -1,0 +1,58 @@
+---
+- name: Download nvm installer
+  get_url: url="https://raw.githubusercontent.com/creationix/nvm/v{{ nvm_version }}/install.sh" dest=/tmp/nvm-installer.sh mode=u=rwx,g=r,o=x
+  tags: install-nvm
+
+- name: Execute the nvm-installer.sh
+  command: /tmp/nvm-installer.sh
+  args:
+    creates: ~/.nvm/nvm.sh
+  tags: install-nvm
+
+- name: Own the nvm script
+  file:
+    path: "~/.nvm/nvm.sh"
+    state: touch
+    owner: ec2-user
+    mode: u=rwx,g=r,o=x
+  tags: install-nvm
+
+- name: Activate nvm
+  command: /bin/sh ~/.nvm/nvm.sh
+  args:
+    chdir: "~/"
+  tags: install-nvm
+
+- name: Install node
+  shell: source ~/.bashrc && nvm install {{ node_version }}
+  args:
+     executable: /bin/bash
+  tags: install-node
+
+- name: Create node user
+  user:
+    name: "{{ app_user }}"
+    comment: "{{ app_user }} Nodejs"
+    group: wheel
+    home: "/home/{{ app_user }}/"
+  tags: adduser
+
+- name: Create base application directory
+  file:
+    path: "/home/{{ app_user }}{{ app_root }}"
+    state: directory
+    mode: 0755
+  tags: adduser
+
+- name: Create upstart logs directory
+  file:
+    path: "/var/log/upstart/{{ app_service_name }}.log"
+    state: touch
+  tags: addlog
+
+- name: create upstart config
+  template:
+    src: upstart-conf.j2
+    dest: "/etc/init/{{ app_service_name }}.conf"
+    owner: "{{ app_user }}"
+  tags: addupstart
