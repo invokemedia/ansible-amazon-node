@@ -1,7 +1,12 @@
 ---
 - name: start nodeapp
-  service: name="{{ app_service_name }}" state=started
-- name: restart nodeapp
-  service: name="{{ app_service_name }}" state=restarted
+  shell: |
+    source ~/.bashrc
+    cd {{ app_root }};
+    npm start &>> /var/log/{{ app_service_name }}.log &
+    sleep 1
+  ignore_errors: yes
+
 - name: stop nodeapp
-  service: name="{{ app_service_name }}" state=stopped
+  shell: "kill $(ps aux | grep 'node' | awk '{print $2}') &>>/dev/null;"
+  ignore_errors: yes

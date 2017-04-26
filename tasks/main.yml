@@ -1,52 +1,39 @@
 ---
-- name: Create node user
-  user:
-    name: "{{ app_user }}"
-    comment: "{{ app_user }} Nodejs"
-    group: wheel
-    home: "/home/{{ app_user }}/"
-  tags: adduser
-
 - name: Create base application directory
   file:
-    path: "/home/{{ app_user }}{{ app_root }}"
+    path: "{{ app_root }}"
     state: directory
-    mode: 0755
-  become_user: "{{ app_user }}"
-  tags: adduser
+    mode: 0777
+  tags: adddir
 
-- name: Create upstart logs directory
+- name: Create log file
   file:
-    path: "/var/log/upstart/{{ app_service_name }}.log"
+    path: "/var/log/{{ app_service_name }}.log"
     state: touch
+    mode: u=rwx,g=r,o=rwx
   tags: addlog
 
 - name: Download nvm installer
   get_url: url="https://raw.githubusercontent.com/creationix/nvm/v{{ nvm_version }}/install.sh" dest=~/nvm-installer.sh mode=u=rwx,g=r,o=x
-  become_user: "{{ app_user }}"
   tags: install-nvm
 
 - name: Execute the nvm-installer.sh
   command: ~/nvm-installer.sh
   args:
     creates: ~/.nvm/nvm.sh
-  become_user: "{{ app_user }}"
   tags: install-nvm
 
 - name: Own the nvm script
   file:
     path: ~/.nvm/nvm.sh
     state: touch
-    owner: "{{ app_user }}"
-    mode: u=rwx,g=r,o=x
-  become_user: "{{ app_user }}"
+    mode: u=rwx,g=r,o=rwx
   tags: install-nvm
 
 - name: Activate nvm
   command: /bin/bash ~/.nvm/nvm.sh
   args:
     chdir: "~/"
-  become_user: "{{ app_user }}"
   tags: install-nvm
 
 - name: Install node
@@ -54,13 +41,4 @@
     source ~/.bashrc
     nvm install "{{ node_version }}"
     nvm use --delete-prefix "v{{ node_version }}" --silent
-  become_user: "{{ app_user }}"
   tags: install-node
-
-- name: create upstart config
-  template:
-    src: upstart-conf.j2
-    dest: "/etc/init/{{ app_service_name }}.conf"
-    owner: "{{ app_user }}"
-  become_user: "{{ app_user }}"
-  tags: addupstart

@@ -2,13 +2,7 @@
 nvm_version: 0.33.2
 # the version of node you want to install/use
 node_version: 7.9.0
-# the name of the application
-app_name: Project Laura Queue Worker
-# the system user for this application
-app_user: nodeapp
-# root for the app, relative to the app_user home directory
-app_root: /application
-# who made this application?
-app_author: Invoke
+# root for the app
+app_root: /usr/src/app
 # the name of the service for the app
 app_service_name: my-nodeapp

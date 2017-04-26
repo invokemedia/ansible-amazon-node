@@ -12,8 +12,7 @@ This task does the following work:
 
 * install nvm (node version manager)
 * install node (whatever version you like)
-* create a user for node
-* create an entry in Upstart to start, stop, restart, and respawn your app
+* create handles for start and stopping node
 
 Installation
 ------------
@@ -26,14 +25,8 @@ Role Variables
 ```
 # the version of node you want to install/use
 node_version: 7.9.0
-# the name of the application
-app_name: Project Laura Queue Worker
-# the system user for this application
-app_user: nodeapp
-# root for the app, relative to the app_user home directory
+# root for the app
 app_root: /application
-# who made this application?
-app_author: Invoke
 # the name of the service for the app
 app_service_name: my-nodeapp
 ```
@@ -43,9 +36,8 @@ Tags
 
 * install-nvm - install and setup nvm
 * install-node - install new version of node
-* adduser - create a node specific user
-* addlog - create the upstart log directory for the app
-* addupstart - create the upstart entry for the app
+* adddir - create a directory for the app
+* addlog - create the log directory for the app
 
 Dependencies
 ------------
@@ -69,8 +61,9 @@ Handlers
 --------
 
 * `start nodeapp` - start your application
-* `restart nodeapp` - restart your application
 * `stop nodeapp` - stop your application
+
+Because of the way the app runs in the background, these need to be run one after the other
 
 License
 -------
