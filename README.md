@@ -25,7 +25,7 @@ Role Variables
 
 ```
 # the version of node you want to install/use
-node_version: 7.9
+node_version: 7.9.0
 # the name of the application
 app_name: Project Laura Queue Worker
 # the system user for this application
